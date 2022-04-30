@@ -13,13 +13,13 @@ type SmartContract struct {
 
 // Asset describes basic details of what makes up a simple asset
 type Asset struct {
-	ID    string `json:"ID"`
-	Name  string `json:"name"`
-	Count uint64    `json:"count"`
-	OwnerId        string `json:"ownerId"`
+	ID      string `json:"ID"`
+	Name    string `json:"name"`
+	Count   uint64 `json:"count"`
+	OwnerId string `json:"ownerId"`
 }
 
-func (s *SmartContract) InitLedger(ctx contractapi.TransactionContextInterface, id string, count uint64) error {
+func (s *SmartContract) InitStock(ctx contractapi.TransactionContextInterface, id string, count uint64) error {
 	asset := Asset{id + "-0", id, count, "0"}
 	assetJSON, err := json.Marshal(asset)
 	if err != nil {
@@ -118,12 +118,15 @@ func (s *SmartContract) TransferAsset(ctx contractapi.TransactionContextInterfac
 	if assetCount < amount {
 		return fmt.Errorf("Stock does not have enough count!")
 	}
+
 	asset.Count -= amount
 	assetJSON, err := json.Marshal(asset)
 	if err != nil {
 		return err
 	}
-	transferredAsset := Asset{asset.Name + "-" + newOwnerId, id, amount, newOwnerId}
+
+	name := asset.Name
+	transferredAsset := Asset{name + "-" + newOwnerId, name, amount, newOwnerId}
 	transferredAssetJSON, err := json.Marshal(transferredAsset)
 	if err != nil {
 		return err
